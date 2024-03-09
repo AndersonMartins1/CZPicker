@@ -1,19 +1,38 @@
-# references:
-# * http://www.objc.io/issue-6/travis-ci.html
-# * https://github.com/supermarin/xcpretty#usage
+# Travis CI configuration file for an Objective-C project
 
+# Specify the language used in the project
 language: objective-c
+
+# Specify the Ruby version using RVM
 rvm: ruby-head
+
+# Cache CocoaPods to speed up builds
 cache: cocoapods
+
+# Specify the location of the Podfile for the Example project
 podfile: Example/Podfile
+
+# Actions to perform before installing dependencies
 before_install:
-- rvm get stable --auto-dotfiles
-- rvm install 2.3.0
-- rvm use 2.3.0
-- gem install cocoapods
-- pod update --project-directory=Example
+  # Ensure RVM is up to date
+  - rvm get stable --auto-dotfiles
+  # Install Ruby version 2.3.0
+  - rvm install 2.3.0
+  # Use Ruby version 2.3.0
+  - rvm use 2.3.0
+  # Install CocoaPods
+  - gem install cocoapods
+  # Update Pods for the Example project
+  - pod update --project-directory=Example
+
+# Actions to perform during the installation phase
 install:
-- gem install xcpretty --no-rdoc --no-ri --no-document --quiet
+  # Install xcpretty for pretty Xcode output
+  - gem install xcpretty --no-rdoc --no-ri --no-document --quiet
+
+# Actions to perform during the script phase
 script:
-- set -o pipefail && xcodebuild test -workspace Example/CZPicker.xcworkspace -scheme CZPicker-Example -sdk iphonesimulator ONLY_ACTIVE_ARCH=NO | xcpretty -c
-- pod lib lint --quick
+  # Build and run tests for the Example project, piping output to xcpretty for improved readability
+  - set -o pipefail && xcodebuild test -workspace Example/CZPicker.xcworkspace -scheme CZPicker-Example -sdk iphonesimulator ONLY_ACTIVE_ARCH=NO | xcpretty -c
+  # Perform a quick lint check for the Podspec
+  - pod lib lint --quick
